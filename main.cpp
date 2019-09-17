@@ -6,7 +6,6 @@
 #include <sstream>
 #include "Travessa.hpp"
 #include "Mutex.hpp"
-#include "Canibal.hpp"
 #include "Cozinheiro.hpp"
 #include "Randomer.hpp"
 
@@ -48,7 +47,6 @@ void cozinheiro_thread(Travessa &travessa) {
 
 
 void canibal_thread(Travessa &travessa, Mutex &mutex) {
-    Canibal canibal{travessa};
     auto id = mutex.register_consumer();
 
     Randomer randomer{0, 100};
@@ -97,7 +95,7 @@ void canibal_thread(Travessa &travessa, Mutex &mutex) {
     msg.clear();
     msg << "Canibal " << id << " comendo " << quanto_quero_comer << '\n'; // cu
     std::cout << msg.str();
-    canibal.eat(quanto_quero_comer);
+    travessa.pop(quanto_quero_comer);
     mutex.release(id);
 
     msg.clear();

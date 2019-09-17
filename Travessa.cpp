@@ -8,9 +8,7 @@ int Travessa::get_qtde_comida() const {
 
 
 int Travessa::pop(int n ) {
-    if (comida - n <= 0) {
-        return 0;
-    }
+
 
     comida -= n;
 
