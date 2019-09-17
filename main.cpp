@@ -6,7 +6,6 @@
 #include <sstream>
 #include "Travessa.hpp"
 #include "Mutex.hpp"
-#include "Cozinheiro.hpp"
 #include "Randomer.hpp"
 
 
@@ -20,8 +19,21 @@ bool no_food = false;
 
 bool has_food = false;
 
+/**
+ * Função que representa um cozinheiro cozinhando
+ * @param travessa
+ * @param qtde_comida
+ */
+inline void cook(Travessa& travessa, int qtde_comida){
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    travessa.set_qtde_comida(travessa.get_qtde_comida() + qtde_comida);
+}
 
-void cozinheiro_thread(Travessa &travessa) {
+/**
+ * Função que representa uma thread de cozinheiro
+ * @param travessa
+ */
+inline void cozinheiro_thread(Travessa &travessa) {
 
     // espera até algum canibal notificar que não tem mais comida na travessa
     std::unique_lock<std::mutex> lk(mutex_cook);
@@ -31,7 +43,7 @@ void cozinheiro_thread(Travessa &travessa) {
     msg << "Cozinheiro " << std::this_thread::get_id() << " Avisaram que não tem comida, fazendo " << qtde_comida_a_cozinhar << '\n';
     std::cout << msg.str();
 
-    Cozinheiro::cook(travessa, qtde_comida_a_cozinhar);
+    cook(travessa, qtde_comida_a_cozinhar);
 
     msg << "Cozinheiro " << std::this_thread::get_id() << " Quantidade de comida " << travessa.get_qtde_comida() << '\n';
 
@@ -46,7 +58,7 @@ void cozinheiro_thread(Travessa &travessa) {
 }
 
 
-void canibal_thread(Travessa &travessa, Mutex &mutex) {
+inline void canibal_thread(Travessa &travessa, Mutex &mutex) {
     auto id = mutex.register_consumer();
 
     Randomer randomer{0, 100};
