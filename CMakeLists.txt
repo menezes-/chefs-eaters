@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(cannibals)
 
 
-add_executable(cannibals main.cpp)
+add_executable(cannibals main.cpp Travessa.cpp Travessa.hpp)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
