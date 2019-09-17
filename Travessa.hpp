@@ -24,7 +24,7 @@ public:
 
 private:
     // quantidade de comida na travessa
-    std::atomic<int> comida;
+    std::atomic_int comida;
 
 
 };

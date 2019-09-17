@@ -16,7 +16,7 @@ public:
     void release(int id);
 
 private:
-    std::atomic_int curr_consumer{0};
+    std::atomic_int curr_consumer{1};
     std::atomic_int turn{0};
     std::vector<bool> consumers;
 
