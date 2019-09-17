@@ -1,5 +1,6 @@
 #ifndef CANNIBALS_TRAVESSA_HPP
 #define CANNIBALS_TRAVESSA_HPP
+#include <atomic>
 
 /**
  * Represanta uma travessa na qual os canibais pegam comida
@@ -7,7 +8,7 @@
 class Travessa {
 public:
 
-    Travessa(int comida);
+    explicit Travessa(int comida);
 
     int get_qtde_comida() const;
 
@@ -23,7 +24,7 @@ public:
 
 private:
     // quantidade de comida na travessa
-    int comida;
+    std::atomic<int> comida;
 
 
 };
