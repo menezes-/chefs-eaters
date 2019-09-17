@@ -14,7 +14,7 @@ std::mutex mutex_cook;
 
 std::condition_variable cv;
 
-std::atomic_int qtde_comida_a_cozinhar;
+int qtde_comida_a_cozinhar{0};
 
 bool no_food = false;
 
@@ -78,7 +78,7 @@ void canibal_thread(Travessa &travessa, Mutex &mutex) {
         cv.notify_all();
 
         // avisa pra algum cozinheiro para de ser preguiçoso
-        // espera o cozinheiro avisar que tem comida novamente
+        // espera a travessa ter a quantidade certa correta de comida
         {
             std::unique_lock<std::mutex> lk(mutex_cook);
             cv.wait(lk, [] { return has_food; });
@@ -96,7 +96,13 @@ void canibal_thread(Travessa &travessa, Mutex &mutex) {
     msg << "Canibal " << id << " comendo " << quanto_quero_comer << '\n'; // cu
     std::cout << msg.str();
     travessa.pop(quanto_quero_comer);
+
+    if(travessa.get_qtde_comida() < 0){
+        std::cout << "erro" << '\n';
+    }
+
     mutex.release(id);
+
 
     msg.clear();
     msg << "Canibal " << id << " terminou de comer" << '\n'; // cu
