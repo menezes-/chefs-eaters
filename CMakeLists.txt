@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(cannibals)
 
 
-add_executable(cannibals main.cpp Travessa.cpp Travessa.hpp)
+add_executable(cannibals main.cpp Travessa.cpp Travessa.hpp Canibal.cpp Canibal.hpp Cozinheiro.cpp Cozinheiro.hpp)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -10,3 +10,5 @@ find_package(Threads REQUIRED)
 target_link_libraries(cannibals Threads::Threads)
 
 target_compile_features(cannibals PUBLIC cxx_std_11)
+
+target_compile_definitions(cannibals PRIVATE MILLISECONDS_TO_COOK_SINGLE_MEAL=500)
