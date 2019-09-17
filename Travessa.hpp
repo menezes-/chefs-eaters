@@ -20,7 +20,7 @@ public:
      * retira uma unidade de comida da travessa
      * @return qtde - 1
      */
-    int pop();
+    int pop(int n );
 
 private:
     // quantidade de comida na travessa
