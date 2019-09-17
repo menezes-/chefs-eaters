@@ -29,10 +29,14 @@ void cozinheiro_thread(Travessa &travessa) {
     cv.wait(lk, [] { return no_food; });
 
     std::stringstream msg;
-    msg << "Cozinheiro " << std::this_thread::get_id() << " Avisaram que não tem comida, fazendo comida" << '\n';
+    msg << "Cozinheiro " << std::this_thread::get_id() << " Avisaram que não tem comida, fazendo " << qtde_comida_a_cozinhar << '\n';
     std::cout << msg.str();
 
     Cozinheiro::cook(travessa, qtde_comida_a_cozinhar);
+
+    msg << "Cozinheiro " << std::this_thread::get_id() << " Quantidade de comida " << travessa.get_qtde_comida() << '\n';
+
+    std::cout << msg.str();
 
     has_food = true;
     // solta o mutex
@@ -53,51 +57,54 @@ void canibal_thread(Travessa &travessa, Mutex &mutex) {
     auto quanto_quero_comer = randomer();
     std::stringstream msg;
 
-    for (std::size_t i = 0; i < quanto_quero_comer; ++i) {
 
-        msg.clear();
-        msg << "Canibal " << id << " qtde_de_comida " << travessa.get_qtde_comida() << " vou comer 1" << '\n';
-        std::cout << msg.str();
+    msg.clear();
+    msg << "Canibal " << id << " qtde_de_comida " << travessa.get_qtde_comida() << " vou comer " << quanto_quero_comer << '\n';
+    std::cout << msg.str();
 
-        if (travessa.get_qtde_comida() < quanto_quero_comer) {
+    if (travessa.get_qtde_comida() < quanto_quero_comer) {
 
 
-            qtde_comida_a_cozinhar += quanto_quero_comer;
+        qtde_comida_a_cozinhar += quanto_quero_comer;
 
-            {
-                std::lock_guard<std::mutex> lk(mutex_cook);
-                no_food = true;
-                msg.clear();
-                msg << "Canibal " << id << " quer comer " << quanto_quero_comer << " mas não tem comida"
-                    << " Notificando cozinheiros" << '\n';
-                std::cout << msg.str();
-
-            }
-
-            cv.notify_all();
-
-            // avisa pra algum cozinheiro para de ser preguiçoso
-            // espera o cozinheiro avisar que tem comida novamente
-            {
-                std::unique_lock<std::mutex> lk(mutex_cook);
-                cv.wait(lk, [] { return has_food; });
-                msg.clear();
-                msg << "Canibal " << id << " cozinheiro diz que tem comida" << '\n';
-                std::cout << msg.str();
-            }
+        {
+            std::lock_guard<std::mutex> lk(mutex_cook);
+            no_food = true;
+            msg.clear();
+            msg << "Canibal " << id << " quer comer " << quanto_quero_comer << " mas não tem comida"
+                << " Notificando cozinheiros" << '\n';
+            std::cout << msg.str();
 
         }
 
-        // usa nosso mutex para comer que nem um canibal comeria
-        // /m/
-        mutex.acquire(id);
-        msg.clear();
-        msg << "Canibal " << id << " comendo um" << '\n'; // cu
-        std::cout << msg.str();
-        travessa.pop();
-        mutex.release(id);
+        cv.notify_all();
+
+        // avisa pra algum cozinheiro para de ser preguiçoso
+        // espera o cozinheiro avisar que tem comida novamente
+        {
+            std::unique_lock<std::mutex> lk(mutex_cook);
+            cv.wait(lk, [] { return has_food; });
+            msg.clear();
+            msg << "Canibal " << id << " cozinheiro diz que tem comida" << '\n';
+            std::cout << msg.str();
+        }
 
     }
+
+    // usa nosso mutex para comer que nem um canibal comeria
+    // /m/
+    mutex.acquire(id);
+    msg.clear();
+    msg << "Canibal " << id << " comendo " << quanto_quero_comer << '\n'; // cu
+    std::cout << msg.str();
+    canibal.eat(quanto_quero_comer);
+    mutex.release(id);
+
+    msg.clear();
+    msg << "Canibal " << id << " terminou de comer" << '\n'; // cu
+    std::cout << msg.str();
+
+
 
 }
 
